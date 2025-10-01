@@ -1,0 +1,30 @@
+{
+    "order_query_agent": [
+        "查詢訂單狀態", "我的購買記錄", "配送進度查詢", "物流追蹤號碼",
+        "訂單什麼時候到", "JTCG-202508-10001", "user_id u_123456"
+    ],
+    "product_recommendation_agent": [
+        "推薦雙螢幕支架", "27吋適合哪款", "VESA 100x100 支援",
+        "曲面螢幕臂架", "壁掛vs桌夾", "重載臂推薦"
+    ],
+    "technical_support_agent": [
+        "桌板厚度85mm", "安裝注意事項", "VESA孔距規格",
+        "相容性確認", "夾具安裝", "螺絲長度"
+    ],
+    "policy_information_agent": [
+        "退換貨政策", "保固多久", "發票申請", "三聯式", "維修申請",
+        "RMA流程", "退款時程", "結帳"
+    ],
+    "payment_shipping_agent": [
+        "Apple Pay付款", "運費計算", "海外寄送",
+        "免運門檻", "配送時間", "分期付款"
+    ],
+    "human_escalation_agent": [
+        "轉真人客服", "我要找客服", "human agent please",
+        "connect to agent", "真人處理"
+    ],
+    "inventory_management_agent": [
+        "現貨查詢", "庫存狀況", "到貨通知",
+        "缺貨補貨", "預購時程"
+    ]
+}

@@ -1,0 +1,192 @@
+[
+  {
+    "name": "7天鑑賞期退換貨政策",
+    "type": "policy_information",
+    "description": "JTCG Shop 提供 7 天鑑賞期；商品需保持全新且包裝配件完整，非瑕疵退換可能需自行負擔運費。"
+  },
+  {
+    "name": "臂架保固申請",
+    "type": "technical_support",
+    "description": "臂架類商品享 1 年有限保固，申請維修時請準備訂單編號與故障照片/影片，提供線上申請表單。"
+  },
+  {
+    "name": "三聯發票開立",
+    "type": "policy_information",
+    "description": "可以開立三聯發票；請在下單時填寫統編與抬頭。出貨後會寄電子發票，也可在會員中心下載。"
+  },
+  {
+    "name": "出貨時程與運費",
+    "type": "payment_shipping",
+    "description": "現貨 1–2 個工作天出貨；滿 NT$1,500 免運（離島另計）。"
+  },
+  {
+    "name": "27吋螢幕單臂支架推薦",
+    "type": "product_recommendation",
+    "description": "推薦「JTCG 單臂支架 Lite（至 27 吋）」；支援 75x75/100x100 VESA，適合輕量螢幕。"
+  },
+  {
+    "name": "夾具桌板厚度相容性",
+    "type": "technical_support",
+    "description": "多數夾具支援約 10–85mm 桌板厚度；若材質為玻璃或軟木，建議加墊片或使用穿孔固定。"
+  },
+  {
+    "name": "轉接真人客服",
+    "type": "human_escalation",
+    "description": "為協助轉接真人客服，請提供可聯絡的 Email。"
+  },
+  {
+    "name": "超寬螢幕重載臂推薦",
+    "type": "product_recommendation",
+    "description": "推薦「超寬螢幕重載臂（至 49 吋）」；承重與 VESA 相容性較充足，支援 100x100/200x100 VESA。"
+  },
+  {
+    "name": "壁掛式安裝方案",
+    "type": "product_recommendation",
+    "description": "推薦「壁掛式伸縮臂（至 34 吋）」；請確認牆面可承重並使用對應膨脹螺絲。"
+  },
+  {
+    "name": "筆電托盤配件",
+    "type": "product_recommendation",
+    "description": "「筆電托盤＋VESA 轉接組」可搭配支援 VESA 的臂架使用，適用 11–16 吋筆電。"
+  },
+  {
+    "name": "走線管理配件",
+    "type": "product_recommendation",
+    "description": "「桌面走線管理組」可協助整理臂架與桌下線材，包含走線套管、束線帶與桌下托盤。"
+  },
+  {
+    "name": "支付方式選項",
+    "type": "payment_shipping",
+    "description": "支援信用卡、Apple Pay、Google Pay、LINE Pay；部分銀行有 3/6/12 期分期。"
+  },
+  {
+    "name": "海外配送評估",
+    "type": "payment_shipping",
+    "description": "主要配送台灣本島；海外配送可先讓客服評估可行方案與費用。"
+  },
+  {
+    "name": "到貨通知設定",
+    "type": "inventory_management",
+    "description": "可在商品頁點選「到貨通知我」，補貨後會以 Email 通知。"
+  },
+  {
+    "name": "到府安裝服務",
+    "type": "technical_support",
+    "description": "部分地區提供到府安裝（由合作廠商執行），費用依地區與難度另計。"
+  },
+  {
+    "name": "夾具vs穿孔安裝比較",
+    "type": "technical_support",
+    "description": "穿孔固定穩定度較高；夾具免鑽孔、安裝快。若桌板材質特殊或很厚，建議選穿孔。"
+  },
+  {
+    "name": "6公斤螢幕支架選擇",
+    "type": "product_recommendation",
+    "description": "6 公斤多數單臂可支援；若要更順暢建議選氣壓臂。"
+  },
+  {
+    "name": "張力調整方法",
+    "type": "technical_support",
+    "description": "使用附贈六角扳手微調；順時針/逆時針調整張力，讓螢幕能穩定停住。"
+  },
+  {
+    "name": "筆電螢幕轉接方案",
+    "type": "technical_support",
+    "description": "可用 VESA 轉接板或筆電托盤，需確認尺寸與負重。"
+  },
+  {
+    "name": "安全使用注意事項",
+    "type": "technical_support",
+    "description": "建議加裝桌面保護墊片、避免孩童攀掛、定期檢查螺絲鎖固與走線。"
+  },
+  {
+    "name": "壁掛牆面要求",
+    "type": "technical_support",
+    "description": "建議磚牆或實心牆；若石膏板需對應膨脹螺絲或專業安裝。"
+  },
+  {
+    "name": "保固維修申請流程",
+    "type": "technical_support",
+    "description": "請提供訂單編號與故障照片/影片，線上表單填寫後，客服會回覆處理時程。"
+  },
+  {
+    "name": "發票補發下載",
+    "type": "policy_information",
+    "description": "可在會員中心補發下載；抬頭/統編需於下單時填寫，若遺漏請在出貨前聯繫客服協助。"
+  },
+  {
+    "name": "企業採購方案",
+    "type": "payment_shipping",
+    "description": "企業/學校均可評估專案報價與安裝服務。"
+  },
+  {
+    "name": "退貨流程時程",
+    "type": "policy_information",
+    "description": "退貨：提出申請→回收→檢查→退款，通常約 7–14 個工作天（依支付方式與銀行作業）。"
+  },
+  {
+    "name": "訂單物流追蹤",
+    "type": "order_query",
+    "description": "出貨後可在「我的訂單」點擊追蹤碼查看。需要查詢請提供 user_id。"
+  },
+  {
+    "name": "會員點數使用規則",
+    "type": "policy_information",
+    "description": "點數可於結帳抵用，無法折現；效期與規則以會員中心公告為準。"
+  },
+  {
+    "name": "產品保養清潔",
+    "type": "technical_support",
+    "description": "以微濕布擦拭，避免溶劑；定期檢查關節與螺絲，必要時小幅調整。"
+  },
+  {
+    "name": "桌面深度建議",
+    "type": "technical_support",
+    "description": "一般建議桌深至少 60cm，後方保留 10–15cm 利於走線與活動。"
+  },
+  {
+    "name": "線材走線規劃",
+    "type": "technical_support",
+    "description": "可沿臂後側與走線槽固定，預留轉動餘量；轉接器與變壓器避免懸空。"
+  },
+  {
+    "name": "缺件補寄申請",
+    "type": "order_query",
+    "description": "請於 7 日內提供訂單編號與開箱照片，協助補寄缺失配件。"
+  },
+  {
+    "name": "VESA螺絲規格",
+    "type": "technical_support",
+    "description": "多數為 M4（約 10–14mm）；大型螢幕可能用到 M6/M8，請以螢幕原廠手冊為準。"
+  },
+  {
+    "name": "升降桌相容性",
+    "type": "technical_support",
+    "description": "可以相容，建議預留 10–15cm 線材餘量並固定走線，避免升降拉扯。"
+  },
+  {
+    "name": "客服服務時間",
+    "type": "human_escalation",
+    "description": "線上客服時段為週一至週五 09:30–18:00（國定假日除外）。若需要轉真人，請提供 Email。"
+  },
+  {
+    "name": "雙螢幕+筆電配置",
+    "type": "product_recommendation",
+    "description": "可用「雙螢幕氣壓臂 Pro」搭配「筆電托盤＋VESA 轉接組」。"
+  },
+  {
+    "name": "玻璃桌面安裝建議",
+    "type": "technical_support",
+    "description": "玻璃桌建議加墊片或改穿孔固定（需專業評估）。也可考慮壁掛方案。"
+  },
+  {
+    "name": "安裝時間估計",
+    "type": "technical_support",
+    "description": "一般 20–40 分鐘可完成（依桌面/走線複雜度而異）。"
+  },
+  {
+    "name": "支付失敗處理",
+    "type": "payment_shipping",
+    "description": "可先確認卡片/網路狀況並重試；仍失敗可改用其他支付或聯繫客服協助。"
+  }
+]
