@@ -76,16 +76,17 @@ class Orchestrator:
                     configuration=configuration
                 )
                 task_status = response
-                if task_id := response["result"]["id"]:
-                    _c = 0
-                    # 輪詢直到完成
-                    while _c <= 30:
-                        task_status = await a2a_client.get_task(task_id)
-                        logfire.info(f"A2A get task route", task_status=task_status)
-                        if task_status["result"]["status"]["state"] in ['completed', 'failed']:
-                            break
-                        await asyncio.sleep(1)
-                        _c += 1
+                async with asyncio.timeout(60*5):
+                    try:
+                        if task_id := response["result"]["id"]:
+                            while True:
+                                task_status = await a2a_client.get_task(task_id)
+                                logfire.info(f"A2A get task route", task_status=task_status)
+                                if task_status["result"]["status"]["state"] in ['completed', 'failed']:
+                                    break
+                                await asyncio.sleep(1)
+                    except asyncio.TimeoutError:
+                        logfire.error(f"A2A get task timeout")
 
                 logfire.info(f"A2A send message route", response=task_status)
 

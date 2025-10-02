@@ -43,7 +43,6 @@ def test_build_categories_description(router):
 ])
 def test_find_best_agent_product(router, text, answer):
     scores = router.find_best_agent(text)
-    print(text, json.dumps(scores, indent=2, ensure_ascii=False))
     max_key = max(scores, key=scores.get)
     assert max_key == answer
 

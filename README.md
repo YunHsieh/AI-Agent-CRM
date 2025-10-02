@@ -49,3 +49,9 @@ curl --location 'http://localhost:8000/chat' \
     "message": "發票可以開三聯式嗎？結帳時要填什麼？"
 }'
 ```
+
+```bash
+# in the project root directory
+export PYTHONPATH=$PWD
+python3 scripts/agent_test.py
+```

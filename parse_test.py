@@ -21,10 +21,10 @@ faqs = prepare_faq_data(pd.read_csv(pathlib.Path('dummy_data/ai-eng-test-sample-
 classification = prepare_classification_data(pd.read_csv(pathlib.Path('dummy_data/faq-classification.csv')))
 products = prepare_product_data(pd.read_csv(pathlib.Path('dummy_data/ai-eng-test-sample-products.csv')))
 # 直接得到 Pydantic 模型實例
-orders = prepare_order_data('dummy_data/data.json')
-users = prepare_user_data_from_orders('dummy_data/data.json')
-brand = prepare_brand_data_from_orders('dummy_data/data.json')
-items = prepare_item_data_from_orders('dummy_data/data.json')
+orders = prepare_order_data('dummy_data/orders.json')
+users = prepare_user_data_from_orders('dummy_data/orders.json')
+brand = prepare_brand_data_from_orders('dummy_data/orders.json')
+items = prepare_item_data_from_orders('dummy_data/orders.json')
 
 create_collection("faqs", recreate=True)
 insert_data("faqs", faqs)

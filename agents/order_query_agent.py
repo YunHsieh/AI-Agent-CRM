@@ -1,7 +1,11 @@
+import json
+import pathlib
+
 from pydantic_ai import Agent
 from pydantic_ai.tools import Tool
 from pydantic_ai.models.openai import OpenAIChatModel
 
+from agents.models import Order
 from cores.storages import get_client, generate_embedding
 
 model = OpenAIChatModel("gpt-4.1", provider='openai')
@@ -64,9 +68,50 @@ def process_data(data: str) -> str:
     except Exception as e:
         raise
 
+def order_data(data: str) -> str:
+    '''TODO: it will be get information from DB
+    '''
+    order = pathlib.Path('dummy_data/orders.json')
+    orders = []
+
+    for user_id, user_data in json.load(order.open())['orders_db'].items():
+        for order_info in user_data["orders"]:
+            order = Order(
+                order_id=order_info["order_id"],
+                status=order_info["status"],
+                carrier=order_info.get("carrier"),
+                tracking=order_info.get("tracking"),
+                eta=order_info.get("eta"),
+                shipping_address=order_info["shipping_address"],
+                contact_phone=order_info["contact_phone"],
+                order_url=order_info["order_url"],
+                placed_at=order_info["placed_at"],
+                user_id=user_id,
+                items=order_info.get("items", [])
+            )
+            orders.append(order)
+
+    return json.dumps(
+        [order.model_dump() for order in orders],
+        default=str,
+        ensure_ascii=False,
+        indent=2
+    )
+
+
 # 創建 pydantic-ai Agent
+# TODO: check 訂單 id 正確性
 order_query_agent = Agent(
     model,
-    system_prompt='你是一個資料處理助手，專門處理和分析資料。',
-    tools=[Tool(process_data, name='process_data')]
+    system_prompt='''你是一個訂單處理專家，專門針對訂單相關資訊回覆
+    
+如需要查詢訂單，必須要提供 order_id 
+
+當用戶詢問政策相關問題時，你必須使用 process_data 工具來搜尋相關的FAQ資料。
+
+基於工具返回的資料提供準確、完整的政策說明，不要編造或臆測任何資訊。
+如果工具沒有返回相關資料，請告知用戶無法找到相關政策資訊。
+    ''',
+    tools=[Tool(process_data, name='process_data'),
+           Tool(order_data, name='order_data')],
 )

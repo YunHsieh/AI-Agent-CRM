@@ -65,6 +65,11 @@ def process_data(data: str) -> str:
 
 inventory_management_agent = Agent(
     model,
-    system_prompt='你是一個庫存管理的系統，根據相關庫存內容給予回應',
+    system_prompt='''你是一個庫存管理的系統，根據相關庫存內容給予回應
+當用戶詢問政策相關問題時，你必須使用 process_data 工具來搜尋相關的FAQ資料。
+
+基於工具返回的資料提供準確、完整的政策說明，不要編造或臆測任何資訊。
+如果工具沒有返回相關資料，請告知用戶無法找到相關政策資訊。   
+''',
     tools=[Tool(process_data, name='process_data')]
 )

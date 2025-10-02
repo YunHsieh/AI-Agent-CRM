@@ -1,15 +1,8 @@
 import datetime
 import pydantic
 
-from typing import List, Literal
-from pydantic import BaseModel, Field
-
-
-class Brand(pydantic.BaseModel):
-    id: str
-    name: str
-    description: str
-    created_at: datetime.datetime
+from typing import List, Literal, Optional
+from pydantic import Field
 
 
 class User(pydantic.BaseModel):
@@ -21,18 +14,26 @@ class User(pydantic.BaseModel):
 
 
 class Order(pydantic.BaseModel):
-    id: str
-    name: str
+    order_id: str
     status: str
-    carrier: str|None
-    tracking: str|None
-    eta: datetime.datetime
+    carrier: Optional[str] = None
+    tracking: Optional[str] = None
+    eta: Optional[datetime.date] = None
     shipping_address: str
     contact_phone: str
     order_url: str
     placed_at: datetime.datetime
+    items: List[dict] = []
+    user_id: Optional[str] = None
+    created_at: Optional[datetime.datetime] = None
+    updated_at: Optional[datetime.datetime] = datetime.datetime.now()
+
+
+class Brand(pydantic.BaseModel):
+    id: str
+    name: str
+    description: str
     created_at: datetime.datetime
-    updated_at: datetime.datetime
 
 
 class Item(pydantic.BaseModel):
@@ -51,7 +52,7 @@ class Product(pydantic.BaseModel):
     updated_at: datetime.datetime
 
 
-class IntentCategory(BaseModel):
+class IntentCategory(pydantic.BaseModel):
     name: Literal[
         "order_query_agent",
         "product_recommendation_agent",
@@ -66,7 +67,7 @@ class IntentCategory(BaseModel):
     patterns: List[str] = Field(default=[], description="常見的查詢模式")
 
 
-class IntentAnalysisWithContext(BaseModel):
+class IntentAnalysisWithContext(pydantic.BaseModel):
     query: str
     available_categories: List[IntentCategory]
     selected_category: str

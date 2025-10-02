@@ -2,7 +2,7 @@ from pydantic_ai import Agent
 from pydantic_ai.tools import Tool
 from pydantic_ai.models.openai import OpenAIChatModel
 
-from cores.storages import get_client
+from cores.storages import get_client, generate_embedding
 
 model = OpenAIChatModel("gpt-4.1", provider='openai')
 
@@ -67,6 +67,13 @@ def process_data(data: str) -> str:
 
 human_escalation_agent = Agent(
     model,
-    system_prompt='你是一個資料處理助手，專門處理和分析資料。',
+    system_prompt='''你是將會提供客服的資訊
+如果對方想轉接真人客服，必須要對方提供 Email 跟對方說會主動聯絡對方
+    
+當用戶詢問政策相關問題時，你必須使用 process_data 工具來搜尋相關的FAQ資料。
+
+基於工具返回的資料提供準確、完整的政策說明，不要編造或臆測任何資訊。
+如果工具沒有返回相關資料，請告知用戶無法找到相關政策資訊。    
+''',
     tools=[Tool(process_data, name='process_data')]
 )
