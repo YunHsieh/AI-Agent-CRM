@@ -126,6 +126,7 @@ class Orchestrator:
 用戶原始請求：{text}
 
 請將此請求轉換為適當的服務調用。可調用多個相關服務以提供更全面的回答。
+- 絕對不要編造或假設用戶ID、訂單ID等敏感資訊
 
 可用服務 maintains：
 {router_config.build_categories_description()}
@@ -145,9 +146,12 @@ class Orchestrator:
         )
 
         enhanced_prompt = f'''
+使用者的問題: {payload["message"]}
+回應: {data}
+
 ## 回應原則
-- **語言一致**：立即跟隨用戶最新訊息的語言
-- **字詞精簡**：將回應濃縮成 50 字左右並且使用建議的方式，再透過延伸方式給予使用者適合的提問進而補充
+- **語言一致**：優先使用使用者要求語言回覆，其次是使用者使用的語言
+- **字詞精簡**：將回應濃縮成 30 字左右並且使用建議的方式，再透過延伸方式給予使用者適合的提問進而補充
 - **有憑有據**：只使用工具返回的資料，不臆測編造
 - **下一步明確**：每次回覆都給出可立即執行的行動建議的問題
 
@@ -155,9 +159,6 @@ class Orchestrator:
 - 非相關問題：禮貌重導回四大功能範圍
 - 資料不足：說明「目前無法確認」並提供替代方案
 - 只使用工具提供的圖片連結，不外抓圖片
-
-使用者的問題: {payload["message"]}
-回應: {data}
-        '''
+'''
         result = await preprocess_agent.run(enhanced_prompt)
         return result.output

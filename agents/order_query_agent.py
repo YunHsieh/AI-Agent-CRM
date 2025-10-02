@@ -1,11 +1,13 @@
 import json
 import pathlib
+import re
 
+import logfire
 from pydantic_ai import Agent
 from pydantic_ai.tools import Tool
-from pydantic_ai.models.openai import OpenAIChatModel
+from pydantic_ai.models.openai import OpenAIChatModel, OpenAIChatModelSettings
 
-from agents.models import Order
+from agents.models import Order, OrderQueryInput
 from cores.storages import get_client, generate_embedding
 
 model = OpenAIChatModel("gpt-4.1", provider='openai')
@@ -40,7 +42,7 @@ def get_faq_by_ids():
     faq_ids = [result["faq_id"] for result in results if "faq_id" in result]
     return faq_ids
 
-
+@logfire.instrument('process_data')
 def process_data(data: str) -> str:
     """處理資料並返回相關FAQ信息"""
     try:
@@ -68,13 +70,14 @@ def process_data(data: str) -> str:
     except Exception as e:
         raise
 
-def order_data(data: str) -> str:
+
+def query_order_data():
     '''TODO: it will be get information from DB
     '''
-    order = pathlib.Path('dummy_data/orders.json')
+    order_path = pathlib.Path('dummy_data/orders.json')
     orders = []
 
-    for user_id, user_data in json.load(order.open())['orders_db'].items():
+    for user_id, user_data in json.load(order_path.open())['orders_db'].items():
         for order_info in user_data["orders"]:
             order = Order(
                 order_id=order_info["order_id"],
@@ -98,20 +101,49 @@ def order_data(data: str) -> str:
         indent=2
     )
 
+order_checker_agent = Agent(
+    model,
+    system_prompt=f"""根據輸入內容，記錄重要資訊""",
+    output_type=OrderQueryInput,
+)
 
-# 創建 pydantic-ai Agent
+
+@logfire.instrument('order-data')
+def order_data(data: OrderQueryInput) -> str:
+    # result = order_checker_agent.run_sync(data)
+    # result = result.output
+    logfire.info(f"agent data: {data}")
+    is_complete = True
+    content = '用戶必須提供\n'
+    if not data.user_id or not re.match(r'u_\d{6}', data.user_id):
+        content += "- user_id 格式應為 e.g. u_123456\n"
+        is_complete = False
+    # if not result.order_id or not re.match(r'JTCG-.*', result.order_id):
+    #     content += "- order_id 格式應為 e.g. JTCG-202508-12345\n"
+    #     is_complete = False
+    if is_complete:
+        return query_order_data()
+    return content + "提供以上資訊才可以為用戶查詢相關資料"
+
+
 # TODO: check 訂單 id 正確性
 order_query_agent = Agent(
     model,
-    system_prompt='''你是一個訂單處理專家，專門針對訂單相關資訊回覆
-    
-如需要查詢訂單，必須要提供 order_id 
+    system_prompt='''你是訂單處理專家。
 
-當用戶詢問政策相關問題時，你必須使用 process_data 工具來搜尋相關的FAQ資料。
+**重要流程**:
+1. 收到任何訂單查詢時,**第一步務必**呼叫 order_data 工具來驗證用戶身份與取得訂單資料
+2. 如果 order_data 回傳驗證失敗訊息(包含「用戶必須提供」),直接將該訊息回覆給用戶
+3. 如果 order_data 回傳 JSON 格式的訂單資料,請解析並提供完整說明
+4. 如果用戶詢問 FAQ 相關問題,使用 process_data 工具搜尋相關資訊
 
-基於工具返回的資料提供準確、完整的政策說明，不要編造或臆測任何資訊。
-如果工具沒有返回相關資料，請告知用戶無法找到相關政策資訊。
-    ''',
-    tools=[Tool(process_data, name='process_data'),
-           Tool(order_data, name='order_data')],
+**嚴格遵守**:
+- 不要編造或臆測任何訂單資訊
+- 只依據工具回傳的實際內容回答，工具沒有提供任何資訊就直接回傳「請提供 user_id 為您查詢」
+- 工具未回傳相關資料時,明確告知用戶無法找到資訊
+''',
+    tools=[Tool(order_data, name='order_data', takes_ctx=False),
+        Tool(process_data, name='process_data', takes_ctx=False),
+    ],
+    instrument=True,
 )

@@ -73,3 +73,10 @@ class IntentAnalysisWithContext(pydantic.BaseModel):
     selected_category: str
     confidence: float
     reasoning: str
+
+
+class OrderQueryInput(pydantic.BaseModel):
+    """整理後的訂單查詢輸入"""
+    user_id: Optional[str] = Field(None, description="用戶ID，格式如: u_123456")
+    order_id: Optional[str] = Field(None, description="訂單ID，格式如: JTCG-202508-10001")
+    original_message: str = Field(..., description="用戶的原始訊息")

@@ -11,7 +11,8 @@ for _obj in json.load(conversation_path.open()):
         'expected_answer': '',
         'my_answer': '',
         'using_agent': '',
-        'achievement_rate': ''
+        'achievement_rate': '',
+        'description': '',
     }
 
     if len(_obj) > 1:
