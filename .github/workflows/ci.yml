@@ -13,12 +13,18 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Set up Python and Poetry
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-          poetry-version: '1.8.2'
           cache: 'poetry'
+
+      - name: Install Poetry and uv
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+          pip install uv
+          poetry config virtualenvs.installer uv
 
       - name: Install dependencies
         run: poetry install
