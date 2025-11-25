@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.12'
+
+      - name: Install Poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
+
+      - name: Install dependencies
+        run: |
+          echo -e "\n[tool.poetry]\npackage-mode = false\n" >> pyproject.toml
+          $HOME/.local/bin/poetry install
+
+      - name: Run tests
+        env:
+          OPENAI_API_KEY: test
+          MILVUS_URI: http://localhost:19530
+        run: |
+          $HOME/.local/bin/poetry run pytest tests/
