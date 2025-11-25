@@ -22,12 +22,11 @@ jobs:
       - name: Install Poetry and uv
         run: |
           curl -sSL https://install.python-poetry.org | python3 -
-          echo "$HOME/.local/bin" >> $GITHUB_PATH
           pip install uv
-          poetry config virtualenvs.installer uv
+          $HOME/.local/bin/poetry config virtualenvs.installer uv
 
       - name: Install dependencies
-        run: poetry install
+        run: $HOME/.local/bin/poetry install
 
       - name: Start services
         env:
@@ -46,4 +45,4 @@ jobs:
           OPENAI_API_KEY: test
           MILVUS_URI: http://localhost:19530
         run: |
-          poetry run pytest tests/
+          $HOME/.local/bin/poetry run pytest tests/
