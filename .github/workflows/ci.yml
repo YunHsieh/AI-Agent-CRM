@@ -17,16 +17,22 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-          cache: 'poetry'
 
-      - name: Install Poetry and uv
+      - name: Cache uv dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/uv
+          key: ${{ runner.os }}-uv-${{ hashFiles('**/poetry.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-uv-
+
+      - name: Install and configure uv
         run: |
-          curl -sSL https://install.python-poetry.org | python3 -
           pip install uv
-          $HOME/.local/bin/poetry config virtualenvs.installer uv
+          uv venv
 
       - name: Install dependencies
-        run: $HOME/.local/bin/poetry install
+        run: uv pip sync
 
       - name: Start services
         env:
@@ -44,5 +50,4 @@ jobs:
         env:
           OPENAI_API_KEY: test
           MILVUS_URI: http://localhost:19530
-        run: |
-          $HOME/.local/bin/poetry run pytest tests/
+        run: .venv/bin/pytest tests/
