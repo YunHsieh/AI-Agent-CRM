@@ -43,6 +43,12 @@ jobs:
           TOKENIZERS_PARALLELISM: "false"
           MILVUS_URI: http://localhost:19530
         run: |
+          echo "OPENAI_API_KEY=${OPENAI_API_KEY}" > .env
+          echo "OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT}" >> .env
+          echo "OTEL_SERVICE_NAME=${OTEL_SERVICE_NAME}" >> .env
+          echo "AGENT_URL=${AGENT_URL}" >> .env
+          echo "TOKENIZERS_PARALLELISM=${TOKENIZERS_PARALLELISM}" >> .env
+          echo "MILVUS_URI=${MILVUS_URI}" >> .env
           docker compose up -d
           sleep 15
 
