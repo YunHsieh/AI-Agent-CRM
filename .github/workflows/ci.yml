@@ -22,17 +22,19 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.cache/uv
-          key: ${{ runner.os }}-uv-${{ hashFiles('**/pyproject.toml') }}
+          key: ${{ runner.os }}-uv-${{ hashFiles('**/poetry.lock') }}
           restore-keys: |
             ${{ runner.os }}-uv-
 
-      - name: Install and configure uv
+      - name: Install tools and export dependencies
         run: |
-          pip install uv
-          uv venv
+          pip install poetry uv
+          poetry export --output requirements.txt --without-hashes
 
       - name: Install dependencies
-        run: uv pip install .
+        run: |
+          uv venv
+          uv pip sync requirements.txt
 
       - name: Start services
         env:
