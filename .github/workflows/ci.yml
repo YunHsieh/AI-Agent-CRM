@@ -22,41 +22,30 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.cache/uv
-          key: ${{ runner.os }}-uv-${{ hashFiles('**/poetry.lock') }}
+          key: ${{ runner.os }}-uv-${{ hashFiles('**/pyproject.toml') }}
           restore-keys: |
             ${{ runner.os }}-uv-
 
-      - name: Install tools and export dependencies
-        run: |
-          pip install poetry uv
-          poetry export --output requirements.txt --without-hashes
-
       - name: Install dependencies
         run: |
+          pip install uv
           uv venv
-          uv pip sync requirements.txt
-          uv pip install -e .
+          uv pip install .
 
       - name: Start services
-        env:
-          OPENAI_API_KEY: test
-          OTEL_EXPORTER_OTLP_ENDPOINT: "http://localhost:4318"
-          OTEL_SERVICE_NAME: "ai-agent-crm-dev"
-          AGENT_URL: http://localhost
-          TOKENIZERS_PARALLELISM: "false"
-          MILVUS_URI: http://localhost:19530
         run: |
-          echo "OPENAI_API_KEY=${OPENAI_API_KEY}" > .env
-          echo "OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT}" >> .env
-          echo "OTEL_SERVICE_NAME=${OTEL_SERVICE_NAME}" >> .env
-          echo "AGENT_URL=${AGENT_URL}" >> .env
-          echo "TOKENIZERS_PARALLELISM=${TOKENIZERS_PARALLELISM}" >> .env
-          echo "MILVUS_URI=${MILVUS_URI}" >> .env
+          echo "OPENAI_API_KEY=test" > .env
+          echo "OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4318" >> .env
+          echo "OTEL_SERVICE_NAME=ai-agent-crm-dev" >> .env
+          echo "AGENT_URL=http://localhost" >> .env
+          echo "TOKENIZERS_PARALLELISM=false" >> .env
+          echo "MILVUS_URI=http://localhost:19530" >> .env
           docker compose up -d
           sleep 15
 
       - name: Run tests
         env:
+          PYTHONPATH: .
           OPENAI_API_KEY: test
           MILVUS_URI: http://localhost:19530
         run: .venv/bin/pytest tests/
