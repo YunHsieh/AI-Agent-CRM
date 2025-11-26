@@ -35,6 +35,7 @@ jobs:
         run: |
           uv venv
           uv pip sync requirements.txt
+          uv pip install -e .
 
       - name: Start services
         env:
