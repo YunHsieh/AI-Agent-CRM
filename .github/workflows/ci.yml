@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -22,15 +22,20 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.cache/uv
-          key: ${{ runner.os }}-uv-${{ hashFiles('**/pyproject.toml') }}
+          key: ${{ runner.os }}-uv-${{ hashFiles('**/poetry.lock') }}
           restore-keys: |
             ${{ runner.os }}-uv-
 
+      - name: Install tools and export dependencies
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
+          pip install uv
+          $HOME/.local/bin/poetry export --output requirements.txt --without-hashes
+
       - name: Install dependencies
         run: |
-          pip install uv
           uv venv
-          uv pip install .
+          uv pip sync requirements.txt
 
       - name: Start services
         run: |
