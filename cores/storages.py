@@ -1,51 +1,89 @@
+import json
+import pathlib
 import logfire
+import time
 
-from cores.settings import  SETTINGS
-from pymilvus import MilvusClient
+from cores.settings import SETTINGS
+from pymilvus import MilvusClient, DataType
 from sentence_transformers import SentenceTransformer
 from typing import List, Dict, Any, Optional, Union
 
-# 全域變數
+# Global variables
 _client: Optional[MilvusClient] = None
 _model: Optional[SentenceTransformer] = None
 
 
 def initialize_milvus(uri: str = "", model_name: str = "all-MiniLM-L6-v2"):
-    """初始化 Milvus 客戶端和嵌入模型"""
+    """Initializes the Milvus client, embedding model, and ensures the 'products' collection is ready."""
     global _client, _model
-    if uri == "":
+    if not uri:
         uri = SETTINGS.MILVUS_URI
     try:
-        _client = MilvusClient(uri)
-        _model = SentenceTransformer(model_name)
-        logfire.info(f"Milvus 客戶端和模型初始化成功: {uri}")
+        if _client is None:
+            _client = MilvusClient(uri)
+        if _model is None:
+            _model = SentenceTransformer(model_name)
+        logfire.info(f"Milvus client and model initialized successfully: {uri}")
+
+        # Initialize products collection
+        COLLECTION_NAME = "products"
+        if _client.has_collection(collection_name=COLLECTION_NAME):
+            _client.drop_collection(collection_name=COLLECTION_NAME)
+
+        dimension = _model.get_sentence_embedding_dimension()
+        _client.create_collection(
+            collection_name=COLLECTION_NAME,
+            dimension=dimension,
+            primary_field_name="id",
+            vector_field_name="vector",
+            id_type="int",
+            metric_type="L2",
+            auto_id=True,
+        )
+        logfire.info(f"Collection '{COLLECTION_NAME}' created.")
+
+        products_path = pathlib.Path(__file__).parent.parent / "dummy_data/products.json"
+        if products_path.exists():
+            with open(products_path, "r", encoding="utf-8") as f:
+                products = json.load(f)
+
+            for product in products:
+                product["vector"] = generate_embedding(product["content"])
+
+            _client.insert(collection_name=COLLECTION_NAME, data=products)
+            _client.load_collection(collection_name=COLLECTION_NAME)
+            # Add a short delay to ensure data is queryable after loading.
+            # This is a pragmatic workaround for a potential race condition in the test environment.
+            time.sleep(2)
+            logfire.info(f"Inserted {len(products)} products and loaded collection '{COLLECTION_NAME}'.")
+
         return True
     except Exception as e:
-        logfire.error(f"初始化失敗: {e}")
+        logfire.error(f"Initialization failed: {e}")
         raise
 
 
 def get_client() -> MilvusClient:
-    """取得 Milvus 客戶端實例"""
+    """Gets the Milvus client instance."""
     if _client is None:
-        raise RuntimeError("Milvus 客戶端未初始化，請先呼叫 initialize_milvus()")
+        raise RuntimeError("Milvus client not initialized. Call initialize_milvus() first.")
     return _client
 
 
 def get_model() -> SentenceTransformer:
-    """取得嵌入模型實例"""
+    """Gets the embedding model instance."""
     if _model is None:
-        raise RuntimeError("嵌入模型未初始化，請先呼叫 initialize_milvus()")
+        raise RuntimeError("Embedding model not initialized. Call initialize_milvus() first.")
     return _model
 
 
 def generate_embedding(text: str) -> List[float]:
-    """生成文字嵌入向量"""
+    """Generates a text embedding vector."""
     try:
         model = get_model()
         return model.encode(text).tolist()
     except Exception as e:
-        logfire.error(f"生成嵌入向量失敗: {e}")
+        logfire.error(f"Failed to generate embedding: {e}")
         raise
 
 
@@ -95,18 +133,12 @@ def insert_data(collection_name: str, data: List[Dict[str, Any]]) -> Dict[str, A
 
 def search_data(collection_name: str, query: str, limit: int = 5,
                 output_fields: List[str] = None, filter_expr: str = None) -> List[Dict[str, Any]]:
-    """搜尋相似資料"""
+    """Searches for similar data."""
     try:
         client = get_client()
-
-        # 生成查詢向量
         query_embedding = generate_embedding(query)
-
-        # 設定輸出欄位
         if output_fields is None:
             output_fields = ["doc_id", "doc_type", "title", "content", "metadata"]
-
-        # 執行搜尋
         search_results = client.search(
             collection_name=collection_name,
             data=[query_embedding],
@@ -114,24 +146,23 @@ def search_data(collection_name: str, query: str, limit: int = 5,
             output_fields=output_fields,
             filter=filter_expr
         )
-
         results = []
-        for hit in search_results[0]:
-            result_item = {
-                "id": hit["id"],
-                "score": hit["distance"],
-                "doc_id": hit["entity"]["doc_id"],
-                "doc_type": hit["entity"]["doc_type"],
-                "title": hit["entity"]["title"],
-                "content": hit["entity"]["content"],
-                "metadata": hit["entity"]["metadata"]
-            }
-            results.append(result_item)
-
+        if search_results:
+            for hit in search_results[0]:
+                entity = hit.get('entity', {})
+                result_item = {
+                    "id": hit.get("id"),
+                    "score": hit.get("distance"),
+                    "doc_id": entity.get("doc_id"),
+                    "doc_type": entity.get("doc_type"),
+                    "title": entity.get("title"),
+                    "content": entity.get("content"),
+                    "metadata": entity.get("metadata")
+                }
+                results.append(result_item)
         return results
-
     except Exception as e:
-        logfire.error(f"搜尋失敗: {e}")
+        logfire.error(f"Search failed: {e}")
         return []
 
 
@@ -217,7 +248,7 @@ def delete_by_filter(collection_name: str, filter_expr: str) -> Dict[str, Any]:
         return {
             "success": False,
             "error": str(e),
-            "message": "根據條件刪除資料失敗"
+            "message": "刪除資料失敗"
         }
 
 

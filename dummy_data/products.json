@@ -1,0 +1,32 @@
+[
+    {
+        "id": 1,
+        "doc_id": "product_1",
+        "doc_type": "product",
+        "title": "重載型機械臂",
+        "content": "這是一款專為工業應用設計的重載型機械臂，能夠承受高達50公斤的負載。其高精度和稳定性使其成為裝配、焊接和物料搬運等任務的理想選擇。",
+        "metadata": {
+            "url": "http://example.com/products/heavy_duty_arm"
+        }
+    },
+    {
+        "id": 2,
+        "doc_id": "product_2",
+        "doc_type": "product",
+        "title": "輕型協作機械臂",
+        "content": "這款輕型協作機械臂設計用於與人類操作員在共享工作空間中安全互動。它易於編程，適用於拾取和放置、質量檢測和輕型裝配任務。",
+        "metadata": {
+            "url": "http://example.com/products/collaborative_arm"
+        }
+    },
+    {
+        "id": 3,
+        "doc_id": "product_3",
+        "doc_type": "product",
+        "title": "高速SCARA機械臂",
+        "content": "高速SCARA機械臂非常適合需要快速、可重複運動的應用，例如包裝、分揀和電子元件的放置。其緊湊的設計使其易於集成到現有生產線中。",
+        "metadata": {
+            "url": "http://example.com/products/scara_arm"
+        }
+    }
+]

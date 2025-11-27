@@ -30,6 +30,7 @@ jobs:
         run: |
           curl -sSL https://install.python-poetry.org | python3 -
           pip install uv
+          $HOME/.local/bin/poetry self add poetry-plugin-export
           $HOME/.local/bin/poetry export --output requirements.txt --without-hashes
 
       - name: Install dependencies
@@ -45,8 +46,7 @@ jobs:
           echo "AGENT_URL=http://localhost" >> .env
           echo "TOKENIZERS_PARALLELISM=false" >> .env
           echo "MILVUS_URI=http://localhost:19530" >> .env
-          docker compose up -d
-          sleep 15
+          docker compose up -d --wait
 
       - name: Run tests
         env:

@@ -5,37 +5,8 @@ from pydantic_ai.models.openai import OpenAIChatModel
 
 from cores.storages import get_client, generate_embedding
 
+
 model = OpenAIChatModel("gpt-4.1", provider='openai')
-
-# def get_related_faq(query_vector, faq_ids: list):
-#     """根據查詢向量和FAQ ID列表搜尋相關FAQ"""
-#     if not faq_ids:
-#         return []
-#
-#     client = get_client()
-#     results = client.search(
-#         collection_name="faqs",
-#         data=[query_vector],
-#         filter=f"doc_id in {faq_ids}",
-#         output_fields=["id", "doc_id", "doc_type", "title", "content", "metadata"],
-#         limit=3
-#     )
-#     return results
-
-
-# def get_faq_by_ids():
-#     """獲取技術支援相關的FAQ ID列表"""
-#     client = get_client()
-#     # 修正 query 方法的使用
-#     results = client.query(
-#         collection_name="classification",
-#         filter='agent_type == "technical_support_agent"',
-#         output_fields=["faq_id"],
-#         limit=100
-#     )
-#     # 提取 faq_id 列表
-#     faq_ids = [result["faq_id"] for result in results if "faq_id" in result]
-#     return faq_ids
 
 
 def get_related_products(query_vector):
@@ -56,17 +27,18 @@ def process_data(data: str) -> str:
     try:
         query_vector = generate_embedding(data)
         related_products = get_related_products(query_vector)
-        if not related_products:
+        if not related_products or not related_products[0]:
             return f"未找到與查詢相關的 Product 資訊。原始查詢：{data}"
-        hits = related_products[0] if related_products and len(related_products) > 0 else []
-        if not hits:
-            return f"未找到與查詢相關的 Product 資訊。原始查詢：{data}"
+
+        hits = related_products[0]
+
         # 格式化返回結果
         result_text = f"根據查詢「{data}」找到以下相關FAQ：\n\n"
         for i, faq in enumerate(hits, 1):
-            title = faq.get("title", "未知標題")
-            content = faq.get("content", "無內容")
-            ref_url = faq.get("metadata", {}).get("url", "無參考連結")
+            entity = faq.get("entity", {})
+            title = entity.get("title", "未知標題")
+            content = entity.get("content", "無內容")
+            ref_url = entity.get("metadata", {}).get("url", "無參考連結")
             result_text += f"{i}. {title}\n說明: {content}\n參考連結: {ref_url}\n"
         return result_text
     except Exception as e:

@@ -1,6 +1,5 @@
 *.env
 venv/
-!/.env
 
 .idea/
 DS_Store
