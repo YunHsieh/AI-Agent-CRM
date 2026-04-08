@@ -1,0 +1,56 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Cache uv dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/uv
+          key: ${{ runner.os }}-uv-${{ hashFiles('**/poetry.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-uv-
+
+      - name: Install tools and export dependencies
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
+          pip install uv
+          $HOME/.local/bin/poetry export --output requirements.txt --without-hashes
+
+      - name: Install dependencies
+        run: |
+          uv venv
+          uv pip sync requirements.txt
+
+      - name: Start services
+        run: |
+          echo "OPENAI_API_KEY=test" > .env
+          echo "OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4318" >> .env
+          echo "OTEL_SERVICE_NAME=ai-agent-crm-dev" >> .env
+          echo "AGENT_URL=http://localhost" >> .env
+          echo "TOKENIZERS_PARALLELISM=false" >> .env
+          echo "MILVUS_URI=http://localhost:19530" >> .env
+          docker compose up -d
+          sleep 15
+
+      - name: Run tests
+        env:
+          PYTHONPATH: .
+          OPENAI_API_KEY: test
+          MILVUS_URI: http://localhost:19530
+        run: .venv/bin/pytest tests/
